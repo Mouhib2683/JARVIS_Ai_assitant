@@ -1,0 +1,31 @@
+# Python
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+.ruff_cache/
+
+# Node / Tauri
+node_modules/
+dist/
+target/
+
+# Secrets and local config
+.env
+.env.*
+!.env.example
+
+# Personal data: never commit
+*.wav
+*.mp3
+*.m4a
+evals/speech/audio/
+data/
+*.db
+*.sqlite
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.vscode/*
+!.vscode/extensions.json
