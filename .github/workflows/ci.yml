@@ -1,0 +1,56 @@
+﻿name: JARVIS CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  backend:
+    name: Backend tests and lint
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install Python dependencies
+        run: python -m pip install -r requirements.txt
+
+      - name: Run tests
+        run: python -m pytest -q
+
+      - name: Check Python lint
+        run: python -m ruff check .
+
+      - name: Check Python formatting
+        run: python -m ruff format --check .
+
+  desktop:
+    name: Desktop frontend build
+    runs-on: windows-latest
+
+    defaults:
+      run:
+        working-directory: apps/desktop
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: apps/desktop/package-lock.json
+
+      - name: Install desktop dependencies
+        run: npm ci
+
+      - name: Build desktop frontend
+        run: npm run build

@@ -1,7 +1,6 @@
-
-import services.api.routes.chat as chat_routes
 from fastapi.testclient import TestClient
 
+import services.api.routes.chat as chat_routes
 from services.api.main import app
 from services.llm.provider import MockLLMProvider
 
