@@ -33,3 +33,26 @@ def test_task_rejects_empty_objective():
 def test_task_rejects_unknown_fields():
     with pytest.raises(ValidationError):
         Task(objective="Valid task", unexpected_field="not allowed")
+
+
+def test_task_rejects_objective_over_max_length():
+    with pytest.raises(ValidationError):
+        Task(objective="x" * 2001)
+
+
+def test_task_step_rejects_empty_description():
+    from packages.contracts.tasks import TaskStep
+
+    with pytest.raises(ValidationError):
+        TaskStep(description="")
+
+
+def test_event_rejects_unknown_fields():
+    task = Task(objective="Valid task")
+
+    with pytest.raises(ValidationError):
+        TaskEvent(
+            task_id=task.task_id,
+            event_type=TaskEventType.TASK_CREATED,
+            unexpected_field="not allowed",
+        )
