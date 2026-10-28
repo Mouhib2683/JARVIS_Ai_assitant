@@ -1,4 +1,5 @@
-import { useState, type FormEvent } from "react";
+
+import { useEffect, useState, type FormEvent } from "react";
 import "./App.css";
 
 type ChatMessage = {
@@ -6,11 +7,56 @@ type ChatMessage = {
   content: string;
 };
 
+type HealthResponse = {
+  status: string;
+  version: string;
+};
+
+type ChatResponse = {
+  reply?: string;
+  conversation_id?: string;
+  detail?: string;
+};
+
 function App() {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [message, setMessage] = useState("");
+  const [conversationId, setConversationId] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [backendStatus, setBackendStatus] = useState<
+    "checking" | "online" | "offline"
+  >("checking");
+
+  useEffect(() => {
+    let active = true;
+
+    async function checkBackend() {
+      try {
+        const response = await fetch("http://127.0.0.1:8000/health");
+
+        if (!response.ok) {
+          throw new Error("Health check failed");
+        }
+
+        const data: HealthResponse = await response.json();
+
+        if (data.status !== "ok") {
+          throw new Error("Backend is not healthy");
+        }
+
+        if (active) setBackendStatus("online");
+      } catch {
+        if (active) setBackendStatus("offline");
+      }
+    }
+
+    void checkBackend();
+
+    return () => {
+      active = false;
+    };
+  }, []);
 
   async function sendMessage(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -33,11 +79,13 @@ function App() {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ message: text }),
+        body: JSON.stringify({
+          message: text,
+          ...(conversationId ? { conversation_id: conversationId } : {}),
+        }),
       });
 
-      const data: { reply?: string; detail?: string } =
-        await response.json();
+      const data: ChatResponse = await response.json();
 
       if (!response.ok) {
         throw new Error(data.detail || "The JARVIS API returned an error.");
@@ -47,10 +95,16 @@ function App() {
         throw new Error("The API returned an empty reply.");
       }
 
+      if (!data.conversation_id) {
+        throw new Error("The API did not return a conversation ID.");
+      }
+
+      setConversationId(data.conversation_id);
       setMessages((previous) => [
         ...previous,
         { role: "assistant", content: data.reply! },
       ]);
+      setBackendStatus("online");
     } catch (err) {
       setError(
         err instanceof Error
@@ -67,6 +121,17 @@ function App() {
       <header>
         <h1>JARVIS</h1>
         <p>Your personal AI assistant</p>
+        <p
+          className={`status backend-status ${backendStatus}`}
+          role="status"
+        >
+          Backend:{" "}
+          {backendStatus === "checking"
+            ? "Checking connection..."
+            : backendStatus === "online"
+              ? "Online"
+              : "Offline"}
+        </p>
       </header>
 
       <section className="chat" aria-live="polite">

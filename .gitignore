@@ -30,3 +30,8 @@ Thumbs.db
 .vscode/*
 !.vscode/extensions.json
 report.pyt
+# Local SQLite databases
+/storage/*.sqlite3
+
+# Local SQLite databases
+/storage/*.sqlite3
