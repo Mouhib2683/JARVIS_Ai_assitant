@@ -1,4 +1,4 @@
-﻿from datetime import UTC, datetime
+from datetime import UTC, datetime
 from threading import Lock
 from uuid import UUID, uuid4
 

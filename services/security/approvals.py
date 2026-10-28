@@ -1,4 +1,4 @@
-﻿from datetime import UTC, datetime
+from datetime import UTC, datetime
 from enum import StrEnum
 from threading import Lock
 from uuid import UUID, uuid4
@@ -54,11 +54,7 @@ class ApprovalService:
 
             updated = record.model_copy(
                 update={
-                    "status": (
-                        ApprovalStatus.APPROVED
-                        if approved
-                        else ApprovalStatus.REJECTED
-                    ),
+                    "status": (ApprovalStatus.APPROVED if approved else ApprovalStatus.REJECTED),
                     "decided_at": datetime.now(UTC),
                 }
             )
@@ -78,4 +74,3 @@ class ApprovalService:
                 and record.status == ApprovalStatus.APPROVED
                 and record.action == action
             )
-

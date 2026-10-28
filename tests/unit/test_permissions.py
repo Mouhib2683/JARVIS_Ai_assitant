@@ -1,4 +1,4 @@
-﻿import pytest
+import pytest
 from pydantic import ValidationError
 
 from services.security.permissions import (
@@ -7,7 +7,6 @@ from services.security.permissions import (
     PermissionRequest,
     evaluate_permission,
 )
-
 
 SCOPE = "desktop:launch"
 SCOPES = frozenset({SCOPE})

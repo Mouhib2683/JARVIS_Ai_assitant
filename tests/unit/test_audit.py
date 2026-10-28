@@ -1,4 +1,4 @@
-﻿from services.security.audit import AuditLog, AuditRecord
+from services.security.audit import AuditLog, AuditRecord
 from services.security.permissions import PermissionOutcome
 
 

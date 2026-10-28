@@ -1,4 +1,4 @@
-﻿from integrations.desktop.mock_adapter import MockToolRequest
+from integrations.desktop.mock_adapter import MockToolRequest
 from integrations.desktop.secure_executor import PermissionedDesktopExecutor
 from services.security.permissions import PermissionCategory, PermissionOutcome
 
@@ -42,6 +42,7 @@ def test_executor_does_not_run_adapter_when_scope_is_missing():
 
     assert result.permission == PermissionOutcome.DENY
     assert result.success is False
+
 
 def test_allowed_execution_is_audited():
     from integrations.desktop.secure_executor import PermissionedDesktopExecutor
